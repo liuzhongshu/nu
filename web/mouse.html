@@ -1,0 +1,30 @@
+<!DOCTYPE html> 
+<html> 
+  <head> 
+  <meta charset="utf-8">
+  <title>Nu - Remote your PC</title> 
+  <script src="/jquery/jquery-1.5.2.min.js"></script> 
+</head> 
+<body> 
+<h2 id="status">
+0, 0
+</h2>
+
+<script type="text/javascript">
+   var x=0;
+   
+   $('html').bind("touchmove",function(event){
+   event.preventDefault();
+   //var e = windows.event;
+   x++;
+   //console.log(event)
+   $('#status').html(event.pageX + ',' + event.pageY);
+   });
+   
+   //$('html').mousemove(function(e){
+   //   $('#status').html(e.pageX +', '+ e.pageY);
+   //}); 
+</script>
+ 
+</body> 
+</html> 

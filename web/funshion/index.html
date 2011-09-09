@@ -1,0 +1,48 @@
+<!DOCTYPE html> 
+<html> 
+  <head> 
+  <meta charset="utf-8">
+  <title>Nu - Remote your PC</title> 
+  <link rel="stylesheet" href="/jquery/jquery.mobile-1.0a4.1.min.css" /> 
+  <script src="/jquery/jquery-1.5.2.min.js"></script> 
+  <script src="/jquery/jquery.mobile-1.0a4.1.min.js"></script> 
+</head> 
+<body> 
+<div data-role="page" id="home"> 
+ 
+  <div data-role="header"> 
+    <h1>风行网</h1> 
+  </div> 
+  
+  <div data-role="content"> 
+  	
+ 
+ 	<!-- data-inset使得每个li都有圆角的外框 -->
+    <ul data-role="listview" data-inset="true">
+      <li data-role="list-divider">方向</li>
+      <div data-role="controlgroup" data-type="horizontal">
+      	<a href="#" data-role="button" data-icon="arrow-u" class="funshion" id="cmd-t">上</a>
+      	<a href="#" data-role="button" data-icon="arrow-d" class="funshion" id="cmd-n">下</a> 
+      	<a href="#" data-role="button" data-icon="arrow-l" class="funshion" id="cmd-t">左</a> 
+      	<a href="#" data-role="button" data-icon="arrow-r" class="funshion" id="cmd-t">右</a>
+      </div>      
+      <li data-role="list-divider">视频</li>
+      <li>播放</li> 
+    </ul> 
+    
+    
+  </div> 
+
+  <!-- 不嫩用document.ready, 因为Jquery mobile是用Ajax方法加载这个页面 -->
+  <script type="text/javascript">
+  	 	$("a.funshion").click(function()
+  	 	{
+  	 		$.ajax({url:"/nu?event=sendkey&value=" + this.id});
+  	 		return false;
+  	 	});
+  </script>
+ 
+</div> 
+ 
+</body> 
+</html> 
