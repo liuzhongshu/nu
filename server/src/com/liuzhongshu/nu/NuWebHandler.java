@@ -1,7 +1,11 @@
 package com.liuzhongshu.nu;
 
+import java.awt.Dimension;
 import java.awt.Robot;
+import java.awt.Toolkit;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
@@ -14,30 +18,56 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 
 
 public class NuWebHandler extends AbstractHandler {
+
+	private int dimX = 0, dimY = 0;
 	
 	public NuWebHandler(Robot r)
 	{
-		m_robot = r;		
+		m_robot = r;
+		Toolkit toolkit =  Toolkit.getDefaultToolkit ();
+		Dimension dim = toolkit.getScreenSize();
+		dimX = dim.width;
+		dimY = dim.height;
 	}
 	
-	private int[] translateKeys(String value) throws Exception
+	private List<Integer> translateKeys(String value) throws Exception
 	{
-		if (value == null)
+		List<Integer> keys = new ArrayList<Integer>();
+		if (value == null || value.length() == 0)
 		{
-			return new int[] {};
+			return keys;
 		}
 		else
 		{
 			String [] keynames = value.split("-");
-			int keycount = keynames.length;
-			int[] keys = new int[keycount];
-			for (int i=0; i < keycount; i++)
+			for (int i=0; i < keynames.length; i++)
 			{
-				keys[i] = translateKey(keynames[i]);
+				int key = translateKey(keynames[i]);
+				if (key > 0)
+					keys.add(key);
 			}
 			return keys;
 		}
 	}
+
+	private List<Integer> translateText(String value) throws Exception
+	{
+		List<Integer> keys = new ArrayList<Integer>();
+		if (value == null || value.length() == 0)
+		{
+			return keys;
+		}
+		else
+		{
+			for (int i=0; i < value.length(); i++)
+			{
+				int key = translateKey(value.substring(i, i+1));
+				if (key > 0)
+					keys.add(key);
+			}
+			return keys;
+		}
+	}	
 	
 	private int translateKey(String keyname) throws Exception {
 		KeyCode keycode = KeyCode.toCode("_" + keyname);
@@ -123,39 +153,69 @@ public class NuWebHandler extends AbstractHandler {
 			case _backslash: return KeyEvent.VK_BACK_SLASH;
 			case _semicolon: return KeyEvent.VK_SEMICOLON;
 			case _quote: return KeyEvent.VK_QUOTE;
-			default:  throw new Exception("unknown sendkey value"); 
+			default:  return 0; 
 		}
 	}
 	
 	private void sendKey(String value) throws Exception
 	{
-		int[] keys = translateKeys(value); 
+		List<Integer> keys = translateKeys(value); 
 		
 		for (int key: keys)
 		{
 			m_robot.keyPress(key);
 		}
-		for (int i=keys.length - 1; i >= 0; i--)
+		for (int i=keys.size() - 1; i >= 0; i--)
 		{
-			m_robot.keyRelease(keys[i]);
+			m_robot.keyRelease(keys.get(i));
+		}
+	}
+
+	private void sendText(String value) throws Exception
+	{
+		List<Integer>keys = translateText(value); 
+		
+		for (int key: keys)
+		{
+			m_robot.keyPress(key);
+			m_robot.keyRelease(key);
 		}
 	}
 	
 	private void mouseTo(String value)
 	{
 		String cords[] = value.split(",");
-		int x = Integer.parseInt(cords[0]);
-		int y = Integer.parseInt(cords[1]);
+		int x = normalizeX(Integer.parseInt(cords[0]));
+		int y = normalizeY(Integer.parseInt(cords[1]));
+		
 		m_lastX = x;
 		m_lastY = y;
 		m_robot.mouseMove(x, y);
 	}
 	
+	private int normalizeX(int x) {
+		if (x < 0)
+			return 0;
+		else if (x >= dimX)
+			return dimX -1;
+		else
+			return x;
+	}
+
+	private int normalizeY(int y) {
+		if (y < 0)
+			return 0;
+		else if (y >= dimY)
+			return dimY -1;
+		else
+			return y;
+	}
+
 	private void mouseMove(String value)
 	{
 		String cords[] = value.split(",");
-		int x = Integer.parseInt(cords[0]) + m_lastX;
-		int y = Integer.parseInt(cords[1]) + m_lastY;		
+		int x = normalizeX(Integer.parseInt(cords[0]) + m_lastX);
+		int y = normalizeY(Integer.parseInt(cords[1]) + m_lastY);
 		m_lastX = x;
 		m_lastY = y;
 		m_robot.mouseMove(x, y);
@@ -189,19 +249,28 @@ public class NuWebHandler extends AbstractHandler {
 		}
 	}
 	
+	private void scroll(String value) {
+		int distance = Integer.parseInt(value);
+		m_robot.mouseWheel(distance);
+	}
+	
 	public void handle(String target, Request baseRequest,
 			HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException 
 	{
 		String event= baseRequest.getParameter("event");
 		String value= baseRequest.getParameter("value");
-
+		System.out.println(event + ' ' + value);
 		String responseMsg = "success";
 		try
 		{
 			if ("sendkey".equals(event))
 			{
 				sendKey(value);
+			}
+			if ("sendtext".equals(event))
+			{
+				sendText(value);
 			}
 			else if ("mousemove".equals(event))
 			{
@@ -214,6 +283,10 @@ public class NuWebHandler extends AbstractHandler {
 			else if("click".equals(event))
 			{
 				mouseClick(value);
+			}
+			else if("scroll".equals(event))
+			{
+				scroll(value);
 			}
 			else
 			{
@@ -228,6 +301,7 @@ public class NuWebHandler extends AbstractHandler {
 		{
 			responseMsg = e.toString();
 		}
+		
 		response.setContentType("text/html;charset=utf-8");
 		response.setStatus(HttpServletResponse.SC_OK);
 		baseRequest.setHandled(true);
