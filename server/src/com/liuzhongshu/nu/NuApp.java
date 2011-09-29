@@ -2,7 +2,10 @@ package com.liuzhongshu.nu;
 
 import java.awt.AWTException;
 import java.awt.Robot;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceInfo;
@@ -12,7 +15,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.webapp.WebAppContext;
 
 
 
@@ -22,7 +24,8 @@ public class NuApp {
 	private static JmDNS jmDNS;
 	private static ServiceInfo jmServiceInfo;
 	
-	private static ContextHandler getNuContextHandle() throws AWTException
+	
+	private  ContextHandler getNuContextHandle() throws AWTException
 	{
         ContextHandler nuContext = new ContextHandler();
 		Robot robot = new Robot();
@@ -33,18 +36,47 @@ public class NuApp {
         return nuContext;
 	}
 	
-	private static ContextHandler getFileContextHandle()
+
+	private ContextHandler getEmbedContextHandle() throws IOException
 	{
-		//WebAppContext context = new WebAppContext();
-		//context.setw
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		File tempDir = FileUtil.createTempDirectory();
+		File tempFile = File.createTempFile("tempzip", Long.toString(System.nanoTime()));
+		tempDir.deleteOnExit();
+		tempFile.deleteOnExit();
+		
+		FileOutputStream os = new FileOutputStream(tempFile);
+		InputStream is = getClass().getResourceAsStream("/embed.zip");
+		FileUtil.copyPipe(is, os, 2048);
+		is.close();
+		os.close();
+		
+		FileUtil.unzip(tempFile, tempDir);
 		
         ResourceHandler resource_handler = new ResourceHandler();
         resource_handler.setDirectoriesListed(true);
         resource_handler.setWelcomeFiles(new String[]{ "index.html" });	 
-        resource_handler.setResourceBase("./web");
+        resource_handler.setResourceBase(tempDir.getAbsolutePath());
         
         ContextHandler fileContext = new ContextHandler();
         fileContext.setContextPath("/");
+        fileContext.setResourceBase(".");
+        fileContext.setClassLoader(classLoader);	 
+        fileContext.setHandler(resource_handler);
+		
+        return fileContext;
+	}
+	
+	
+	private ContextHandler getExtendContextHandle()
+	{
+        ResourceHandler resource_handler = new ResourceHandler();
+        resource_handler.setDirectoriesListed(true);
+        resource_handler.setWelcomeFiles(new String[]{ "index.html" });	 
+        resource_handler.setResourceBase("./plugins");
+        
+        ContextHandler fileContext = new ContextHandler();
+        fileContext.setContextPath("/plugins");
         fileContext.setResourceBase(".");
         fileContext.setClassLoader(Thread.currentThread().getContextClassLoader());	 
         fileContext.setHandler(resource_handler);
@@ -56,31 +88,33 @@ public class NuApp {
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception  {
-			//jmdns register
-			registerJmDns();
+			NuApp app = new NuApp();
 			
+			app.registerJmDns();
+						
 			Server server = new Server(NU_HTTP_PORT);
 	       	
-	        ContextHandler nuContext = getNuContextHandle();
-	        ContextHandler fileContext = getFileContextHandle();
+	        ContextHandler nuContext = app.getNuContextHandle();
+	        ContextHandler embedContext = app.getEmbedContextHandle();
+	        ContextHandler extendContext = app.getExtendContextHandle();
 
 	        ContextHandlerCollection contexts = new ContextHandlerCollection();
-	        contexts.setHandlers(new Handler[] {  nuContext, fileContext });
+	        contexts.setHandlers(new Handler[] {  nuContext, embedContext, extendContext });
 	        
 	        server.setHandler(contexts);
 	        server.start();
 	        server.join();
 	        
-	        unrigesterJmDns();
+	        app.unrigesterJmDns();
 	}
 
-	private static void unrigesterJmDns() throws IOException {
+	private  void unrigesterJmDns() throws IOException {
 		jmDNS.unregisterAllServices();
 		jmDNS.close();
 		
 	}
 
-	private static void registerJmDns() throws IOException {
+	private  void registerJmDns() throws IOException {
 		jmDNS = JmDNS.create();
 		jmServiceInfo = ServiceInfo.create("_nuservice._tcp.local.",
                 "NuWebService", NU_HTTP_PORT, "");

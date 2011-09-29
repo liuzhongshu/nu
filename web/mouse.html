@@ -3,28 +3,57 @@
   <head> 
   <meta charset="utf-8">
   <title>Nu - Remote your PC</title> 
+  <link rel="stylesheet" href="/jquery/jquery.mobile-1.0a4.1.min.css" /> 
   <script src="/jquery/jquery-1.5.2.min.js"></script> 
+  <script src="/jquery/jquery.mobile-1.0a4.1.min.js"></script>   
 </head> 
 <body> 
-<h2 id="status">
-0, 0
-</h2>
+<div data-role="page" id="mouse"> 
+ 
+  <div data-role="header"> 
+    <h1>mouse</h1> 
+  </div> 
+  
+  <div data-role="content"> 
+  	
+  <fieldset class="ui-grid-b">
+	<div class="ui-block-a"><button class="mouse" id="-1,-1">.</button></div>
+	<div class="ui-block-b"><button class="mouse" id="0,-1">up</button></div>	   
+	<div class="ui-block-c"><button class="mouse" id="1,-1">.</button></div>	   
+  </fieldset>
+  <fieldset class="ui-grid-b">
+	<div class="ui-block-a"><button class="mouse" id="-1,0">left</button></div>
+	<div class="ui-block-b"><button class="mouse" id="0,0">.</button></div>	   
+	<div class="ui-block-c"><button class="mouse" id="1,0">right</button></div>	   
+  </fieldset>
+  <fieldset class="ui-grid-b">
+	<div class="ui-block-a"><button class="mouse" id="-1,1">.</button></div>
+	<div class="ui-block-b"><button class="mouse" id="0,1">down</button></div>	   
+	<div class="ui-block-c"><button class="mouse" id="1,1">.</button></div>	   
+  </fieldset>
 
-<script type="text/javascript">
-   var x=0;
-   
-   $('html').bind("touchmove",function(event){
-   event.preventDefault();
-   //var e = windows.event;
-   x++;
-   //console.log(event)
-   $('#status').html(event.pageX + ',' + event.pageY);
-   });
-   
-   //$('html').mousemove(function(e){
-   //   $('#status').html(e.pageX +', '+ e.pageY);
-   //}); 
-</script>
+  <fieldset class="ui-grid-a">
+	<div class="ui-block-a"><button class="click" id="left">click</button></div>
+	<div class="ui-block-b"><button class="click" id="right">click</button></div>	   
+  </fieldset>
+    
+  </div> 
+
+  <!-- 不能document.ready, 因为Jquery mobile是用Ajax方法加载这个页面 -->
+  <script type="text/javascript">
+  	 	$("button.mouse").click(function()
+  	 	{
+  	 		$.ajax({url:"/nu?event=mousemove&value=" + this.id});
+  	 		return false;
+  	 	});
+  	 	$("button.click").click(function()
+  	 	{
+  	 		$.ajax({url:"/nu?event=click&value=" + this.id});
+  	 		return false;
+  	 	});
+  </script>
+ 
+</div> 
  
 </body> 
 </html> 

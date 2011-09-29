@@ -3,9 +3,9 @@
   <head> 
   <meta charset="utf-8">
   <title>Nu - Remote your PC</title> 
-  <link rel="stylesheet" href="/jquery/jquery.mobile-1.0a4.1.min.css" /> 
-  <script src="/jquery/jquery-1.5.2.min.js"></script> 
-  <script src="/jquery/jquery.mobile-1.0a4.1.min.js"></script> 
+  <link rel="stylesheet" href="jquery/jquery.mobile-1.0a4.1.min.css" /> 
+  <script src="jquery/jquery-1.5.2.min.js"></script> 
+  <script src="jquery/jquery.mobile-1.0a4.1.min.js"></script> 
 </head> 
 <body> 
 <div data-role="page" id="home"> 
@@ -19,13 +19,27 @@
  	<!-- data-inset使得每个li都有圆角的外框 -->
     <ul data-role="listview" data-inset="true">
       <li data-role="list-divider">Applications</li>
-      <li><a href="funshion">风行</a></li> 
-      <li>迅雷看看</li> 
-      <li>MBMC</li> 
-      <li>酷狗音乐</li>
+      <li><a href="keyboard.html">keyboard</a></li> 
+      <li><a href="mouse.html">mouse</a></li> 
       
-      <li data-role="list-divider">System</li>
-      <li>设置</li> 
+	  <div data-role="collapsible" data-collapsed="true">
+		<h3>Client</h3>
+		<p> 
+		Visit <a href="https://github.com/liuzhongshu/nu">nu project home</a> to get android client for Nu. <br/>
+		</p>
+	  </div>      
+	  <div data-role="collapsible" data-collapsed="true">
+		<h3>Plugins</h3>
+		<p> 
+		Write plugins for Nu is easy, just html/javascript files, and put the files in a sub-folder named 'plugins' with nu.jar file, then visit <a href="/plugins">plugins home</a>.
+		</p>
+	  </div>      
+	  <div data-role="collapsible" >
+		<h3>About</h3>
+		<p>       
+		Copyright 2011 liuzhongshu, visit <a href="https://github.com/liuzhongshu/nu">project home</a> to get more information. 
+		</p>
+	  </div>      
     </ul> 
     
     

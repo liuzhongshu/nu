@@ -1,0 +1,107 @@
+<!DOCTYPE html> 
+<html> 
+  <head> 
+  <meta charset="utf-8">
+  <title>Nu - Remote your PC</title> 
+  <link rel="stylesheet" href="/jquery/jquery.mobile-1.0a4.1.min.css" /> 
+  <script src="/jquery/jquery-1.5.2.min.js"></script> 
+  <script src="/jquery/jquery.mobile-1.0a4.1.min.js"></script> 
+</head> 
+<body> 
+<div data-role="page" id="keyboard"> 
+ 
+  <div data-role="header"> 
+    <h1>keyboard</h1> 
+  </div> 
+  
+  <div data-role="content"> 
+  	
+ 
+ 	<!-- data-inset使得每个li都有圆角的外框 -->
+    <ul data-role="listview" data-inset="true">
+      <li data-role="list-divider">number</li>
+      <div data-role="controlgroup" data-type="horizontal">
+      	<a href="#" data-role="button" class="keyboard" id="0">0</a>
+      	<a href="#" data-role="button" class="keyboard" id="1">1</a>
+      	<a href="#" data-role="button" class="keyboard" id="2">2</a>
+      	<a href="#" data-role="button" class="keyboard" id="3">3</a>
+      	<a href="#" data-role="button" class="keyboard" id="4">4</a>
+      	<a href="#" data-role="button" class="keyboard" id="5">5</a>
+      	<a href="#" data-role="button" class="keyboard" id="6">6</a>
+      	<a href="#" data-role="button" class="keyboard" id="7">7</a>
+      	<a href="#" data-role="button" class="keyboard" id="8">8</a>
+      	<a href="#" data-role="button" class="keyboard" id="9">9</a>
+      </div>
+      
+      <li data-role="list-divider">alphabet</li>
+      <div data-role="controlgroup" data-type="horizontal">
+      	<a href="#" data-role="button" class="keyboard" id="a">a</a>
+      	<a href="#" data-role="button" class="keyboard" id="b">b</a>
+      	<a href="#" data-role="button" class="keyboard" id="c">c</a>
+      	<a href="#" data-role="button" class="keyboard" id="d">d</a>
+      	<a href="#" data-role="button" class="keyboard" id="e">e</a>
+      	<a href="#" data-role="button" class="keyboard" id="f">f</a>
+      	<a href="#" data-role="button" class="keyboard" id="g">g</a>
+      	<a href="#" data-role="button" class="keyboard" id="h">h</a>
+      	<a href="#" data-role="button" class="keyboard" id="i">i</a>
+      	<a href="#" data-role="button" class="keyboard" id="j">j</a>
+      	<a href="#" data-role="button" class="keyboard" id="k">k</a>
+      	<a href="#" data-role="button" class="keyboard" id="l">l</a>
+      	<a href="#" data-role="button" class="keyboard" id="m">m</a>
+      	<a href="#" data-role="button" class="keyboard" id="n">n</a>
+      	<a href="#" data-role="button" class="keyboard" id="o">o</a>
+      	<a href="#" data-role="button" class="keyboard" id="p">p</a>
+      	<a href="#" data-role="button" class="keyboard" id="q">q</a>
+      	<a href="#" data-role="button" class="keyboard" id="r">r</a>
+      	<a href="#" data-role="button" class="keyboard" id="s">s</a>
+      	<a href="#" data-role="button" class="keyboard" id="t">t</a>
+      	<a href="#" data-role="button" class="keyboard" id="u">u</a>
+      	<a href="#" data-role="button" class="keyboard" id="v">v</a>
+      	<a href="#" data-role="button" class="keyboard" id="w">w</a>
+      	<a href="#" data-role="button" class="keyboard" id="x">x</a>
+      	<a href="#" data-role="button" class="keyboard" id="y">y</a>
+      	<a href="#" data-role="button" class="keyboard" id="z">z</a>
+      </div>      
+
+      <li data-role="list-divider">others</li>
+      <div data-role="controlgroup" data-type="horizontal">
+      <a href="#" data-role="button" class="keyboard" id="escape">esc</a>
+      <a href="#" data-role="button" class="keyboard" id="f1">f1</a>
+      <a href="#" data-role="button" class="keyboard" id="f2">f2</a>
+      <a href="#" data-role="button" class="keyboard" id="f3">f3</a>
+      <a href="#" data-role="button" class="keyboard" id="f4">f4</a>
+      <a href="#" data-role="button" class="keyboard" id="f5">f5</a>
+      <a href="#" data-role="button" class="keyboard" id="f6">f6</a>
+      <a href="#" data-role="button" class="keyboard" id="f7">f7</a>
+      <a href="#" data-role="button" class="keyboard" id="f8">f8</a>
+      <a href="#" data-role="button" class="keyboard" id="f9">f9</a>
+      <a href="#" data-role="button" class="keyboard" id="f10">f10</a>
+      <a href="#" data-role="button" class="keyboard" id="f11">f11</a>
+      <a href="#" data-role="button" class="keyboard" id="f12">f12</a>
+      </div>
+      <div data-role="controlgroup" data-type="horizontal">
+      <a href="#" data-role="button" class="keyboard" id="left">left</a>
+      <a href="#" data-role="button" class="keyboard" id="right">right</a>
+      <a href="#" data-role="button" class="keyboard" id="up">up</a>
+      <a href="#" data-role="button" class="keyboard" id="down">down</a>
+      <a href="#" data-role="button" class="keyboard" id="space">space</a>
+      <a href="#" data-role="button" class="keyboard" id="enter">enter</a>
+      </div>
+    </ul> 
+    
+    
+  </div> 
+
+  <!-- 不嫩用document.ready, 因为Jquery mobile是用Ajax方法加载这个页面 -->
+  <script type="text/javascript">
+  	 	$("a.keyboard").click(function()
+  	 	{
+  	 		$.ajax({url:"/nu?event=sendkey&value=" + this.id});
+  	 		return false;
+  	 	});
+  </script>
+ 
+</div> 
+ 
+</body> 
+</html> 
