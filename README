@@ -2,5 +2,8 @@ Nu
 A http-based remote control application.
 
 Install
-just run nu.jar on your pc, then use browser to access http://your.ip
+Just run nu.jar on your pc, then use browser to access http://your.ip:8080
 
+Client
+Nu has an android client, download the nu.apk and install to your android device.
+Just start the nu client, it will search server automatically, no need for config server address.
